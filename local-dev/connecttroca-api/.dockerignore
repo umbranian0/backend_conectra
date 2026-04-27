@@ -1,0 +1,14 @@
+node_modules
+dist
+build
+.cache
+.tmp
+.strapi
+docs
+types
+.git
+.gitignore
+.nvmrc
+.env
+README.md
+npm-debug.log*

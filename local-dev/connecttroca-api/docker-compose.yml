@@ -1,0 +1,70 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: connecttroca-postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-connecttroca}
+      POSTGRES_USER: ${DATABASE_USERNAME:-strapi}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-strapi}
+    ports:
+      - "${DATABASE_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  strapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: connecttroca-strapi
+    init: true
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      NODE_ENV: development
+      DATABASE_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${PORT:-1337}:1337"
+    volumes:
+      - ./config:/opt/app/config
+      - ./public:/opt/app/public
+      - ./src:/opt/app/src
+      - ./tsconfig.json:/opt/app/tsconfig.json
+      - ./types:/opt/app/types
+      - strapi-node-modules:/opt/app/node_modules
+      - strapi-cache:/opt/app/.cache
+      - strapi-tmp:/opt/app/.tmp
+      - strapi-build:/opt/app/build
+      - strapi-uploads:/opt/app/public/uploads
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:1337/api/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 90s
+
+volumes:
+  postgres-data:
+  strapi-node-modules:
+  strapi-cache:
+  strapi-tmp:
+  strapi-build:
+  strapi-uploads:

@@ -1,0 +1,42 @@
+{
+  "name": "connecttroca-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local Strapi backend for ConnectTroca frontend integration",
+  "scripts": {
+    "build": "strapi build",
+    "check": "npm run typecheck && npm run build",
+    "console": "strapi console",
+    "dev": "strapi develop",
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "strapi": "strapi",
+    "setup:local": "node ./scripts/setup-local.mjs",
+    "typecheck": "tsc --noEmit",
+    "docker:check": "docker compose config",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f strapi",
+    "docker:ps": "docker compose ps",
+    "docker:reset": "docker compose down -v"
+  },
+  "dependencies": {
+    "@strapi/plugin-users-permissions": "5.42.1",
+    "@strapi/strapi": "5.42.1",
+    "pg": "8.20.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "6.30.3",
+    "styled-components": "6.1.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=10.0.0"
+  }
+}
